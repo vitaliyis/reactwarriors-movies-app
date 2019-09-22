@@ -10,7 +10,7 @@ export default class App extends React.Component {
       filters: {
         sort_by: "popularity.desc",
         year_by: "",
-        genres_by : []
+        with_genres : []
       },
       page: 1,
       total_pages: ""
@@ -18,12 +18,14 @@ export default class App extends React.Component {
   }
 
   onChangeFilters = event => {
-    const newFilters = {...this.state.filters,
-      [event.target.name]: event.target.value
-    }
-    this.setState({
-      filters: newFilters
-    })
+    const name = event.target.name
+    const value = event.target.value
+    this.setState(state => ({
+      filters: {
+        ...state.filters,
+        [name]: value
+      }
+    }))
   }
 
   onChangePage = page => {
@@ -39,36 +41,21 @@ export default class App extends React.Component {
   }
 
   onResetFilters = () => {
-    // let a = document.querySelectorAll('.form-check-input')
-    //   a.forEach(item => {item.checked = false})
     this.setState({
       filters: {
         sort_by: "popularity.desc",
         year_by: "",
-        genres_by : []
+        with_genres : []
       },
       page: 1,
       total_pages: ""
     })
   }
 
-  onChangeGenres = (event) => {
-    let a = [...this.state.filters.genres_by]   // записали предыдущие данные
-    let target = a.indexOf(event.target.value)
-    if ( target === -1) {
-      a.push(event.target.value)
-    } else {
-      a.splice(target, 1)
-    }
 
-    this.setState({
-      filters: {...this.state.filters, genres_by : a}
-    })
-
-
-  }
 
   render() {
+    console.log('state => ', this.state)
     const {filters, page, total_pages} = this.state;
     return (
       <div className="container">
@@ -84,7 +71,6 @@ export default class App extends React.Component {
                   onChangePage={this.onChangePage}
                   totalPages={total_pages}
                   onResetFilters={this.onResetFilters}
-                  onChangeGenres={this.onChangeGenres}
                 />
               </div>
             </div>

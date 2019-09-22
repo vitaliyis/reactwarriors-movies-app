@@ -7,16 +7,22 @@ import GenresBy from "./GenresBy";
 export default class Filters extends React.Component {
   render() {
     const {
-      filters: { sort_by, year_by, genres_by },
+      filters: { sort_by, year_by, with_genres },
       page,
       onChangeFilters,
       onChangePage,
       totalPages,
       onResetFilters,
-      onChangeGenres
     } = this.props
     return (
       <form className="mb-3">
+        <button
+          type="button"
+          className="btn btn-danger mb-2 mt-2"
+          onClick={onResetFilters}
+        >
+          Сбросить фильтры
+        </button>
         <SortBy
           sort_by={sort_by}
           onChangeFilters={onChangeFilters}
@@ -25,21 +31,14 @@ export default class Filters extends React.Component {
           year_by={year_by}
           onChangeFilters={onChangeFilters}
         />
+        <GenresBy
+          with_genres={with_genres}
+          onChangeFilters={onChangeFilters}
+        />
         <Pagination
           page={page}
           onChangePage={onChangePage}
           totalPages={totalPages}
-        />
-        <button
-          type="button"
-          className="btn btn-danger mt-2"
-          onClick={onResetFilters}
-        >
-          Сбросить фильтры
-        </button>
-        <GenresBy
-          genres_by={genres_by}
-          onChangeGenres={onChangeGenres}
         />
       </form>
     );

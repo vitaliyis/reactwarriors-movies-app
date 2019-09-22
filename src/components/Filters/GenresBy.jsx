@@ -23,31 +23,42 @@ export default class GenresBy extends React.Component {
       });
   }
 
-  getGenresId = (arr, id) => {
-    if (arr.indexOf(String(id)) === -1) {
-      return false
-    }
-    return true
+  getGenresId = (genres, id) => genres.indexOf(String(id)) !== -1
+  // genres.includes(String(id))
+
+  onChangeGenres = (event) => {
+    const newGenresBy = event.target.checked
+      ? [...this.props.with_genres, event.target.value]
+      : this.props.with_genres.filter(genre => String(genre) !== event.target.value)
+    // let a = [...this.props.with_genres]   // записали предыдущие данные
+    // let target = a.indexOf(event.target.value)
+    // if ( target === -1) {
+    //   a.push(event.target.value)
+    // } else {
+    //   a.splice(target, 1)
+    // }
+
+    this.props.onChangeFilters({
+      target: {
+        name: "with_genres",
+        value: newGenresBy
+      }
+    })
+    // this.setState({
+    //   filters: {...this.state.filters, with_genres : a}
+    // })
   }
 
   componentDidMount() {
     this.getGenres()
   }
 
-  // onChange = (event) => {
-  //   console.log('event.target.value => ', event.target.value)
-  //   let a = [...this.state.genresChecked]
-  //   a.push(event.target.value)
-  //   this.setState({
-  //     genresChecked: a
-  //   })
-  // }
-
   render() {
     const { genres } = this.state
-    const { onChangeGenres, genres_by } = this.props
+    const { with_genres } = this.props
     return (
       <div className="mt-2">
+        <label>Жанры:</label>
         {genres.map(genre => {
           return (
             <div className="form-check" key={genre.id}>
@@ -57,8 +68,8 @@ export default class GenresBy extends React.Component {
                 id={genre.id}
                 name={genre.name}
                 value={genre.id}
-                onChange={onChangeGenres}
-                checked={this.getGenresId(genres_by, genre.id)}
+                onChange={this.onChangeGenres}
+                checked={this.getGenresId(with_genres, genre.id)}
               />
               <label className="form-check-label" htmlFor={genre.id}>{genre.name}</label>
             </div>

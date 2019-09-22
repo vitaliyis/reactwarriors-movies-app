@@ -1,25 +1,35 @@
 import React from 'react'
 // import PropTypes from "prop-types"
 
-export default class YearBy extends React.Component {
+export default class YearBy extends React.PureComponent {
   static defaultProps = {
     options :
       {
         begin: 1900,
         end: 2019
       }
-
   }
 
   getOptions(begin, end) {
-    let a = []
+    let yearList = []
     for (let i = end; i >= begin; i--) {
-      a.push(<option key={i} value={i}>{i}</option>)
+      yearList.push(<option key={i} value={i}>{i}</option>)
     }
-    return a
+    return yearList
   }
 
+  // в этом методе решается когда обновлять компонент а когда нет
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if (nextProps.value !== this.props.value) {
+  //     return true
+  //   } else {
+  //     return false
+  //   }
+  //
+  // }
+
   render() {
+    console.log('YearBy')
     const { year_by, onChangeFilters, options } = this.props
     return (
       <div className="form-group">
@@ -31,7 +41,7 @@ export default class YearBy extends React.Component {
           value={year_by}
           onChange={onChangeFilters}
         >
-          <option value="">Ничего</option>
+          <option value="">Выберите год</option>
           {this.getOptions(options.begin, options.end)}
         </select>
       </div>
