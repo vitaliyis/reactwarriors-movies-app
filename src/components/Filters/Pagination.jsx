@@ -1,8 +1,11 @@
 import React from 'react'
 
 export default class Pagination extends React.Component {
+  handleClick = page => () => {
+    this.props.onChangePage(page)
+  }
   render() {
-    const { page, onChangePage, totalPages } = this.props
+    const { page, totalPages } = this.props
     return (
       <div className="mt-3">
         <div className="btn-group">
@@ -10,14 +13,14 @@ export default class Pagination extends React.Component {
             type="button"
             className="btn btn-success"
             disabled={page === 1}
-            onClick={() => onChangePage(page - 1)}
+            onClick={this.handleClick(page - 1)}
           >Назад
           </button>
           <button
             type="button"
             className="btn btn-success"
             disabled={page === totalPages}
-            onClick={() => onChangePage(page + 1)}
+            onClick={this.handleClick(page + 1)}
           >Вперед
           </button>
         </div>

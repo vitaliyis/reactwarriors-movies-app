@@ -10,13 +10,21 @@ export default class YearBy extends React.PureComponent {
       }
   }
 
-  getOptions(begin, end) {
-    let yearList = []
-    for (let i = end; i >= begin; i--) {
-      yearList.push(<option key={i} value={i}>{i}</option>)
-    }
-    return yearList
+  getYearList = (begin, end) => {   //возвращает массив годов в диапозоне
+      let yearList = []
+      for (let i = end; i >= begin; i--) {
+      yearList.push(i)
+      }
+      return yearList
   }
+
+  // getOptions(begin, end) {
+  //   let yearList = []
+  //   for (let i = end; i >= begin; i--) {
+  //     yearList.push(<option key={i} value={i}>{i}</option>)
+  //   }
+  //   return yearList
+  // }
 
   // в этом методе решается когда обновлять компонент а когда нет
   // shouldComponentUpdate(nextProps, nextState) {
@@ -29,8 +37,8 @@ export default class YearBy extends React.PureComponent {
   // }
 
   render() {
-    console.log('YearBy')
     const { year_by, onChangeFilters, options } = this.props
+    const yearList = this.getYearList(options.begin, options.end)
     return (
       <div className="form-group">
         <label htmlFor="year_by">Год</label>
@@ -42,7 +50,10 @@ export default class YearBy extends React.PureComponent {
           onChange={onChangeFilters}
         >
           <option value="">Выберите год</option>
-          {this.getOptions(options.begin, options.end)}
+          {yearList.map(year => (
+            <option key={year} value={year}>{year}</option>
+            ))
+          }
         </select>
       </div>
       )

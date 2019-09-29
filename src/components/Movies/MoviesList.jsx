@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import MovieItem from "./MovieItem";
 import { API_URL, API_KEY_3 } from "../../api/api";
+import qs from 'query-string';
 
 export default class MovieList extends Component {
   constructor() {
@@ -8,15 +9,13 @@ export default class MovieList extends Component {
 
     this.state = {
       movies: [],
+      isLoading: false
     };
-
-    let isLoader = false;
   }
 
   getMovies = (filters, page) => {
     // const sort_by = this.props.filters.sort_by
     const { sort_by, year_by, with_genres } = filters
-    const qs = require('query-string');
     const queryStringParams = {
       api_key: API_KEY_3,
       language: "ru-RU",
@@ -28,13 +27,16 @@ export default class MovieList extends Component {
 
     // const link = `${API_URL}/discover/movie?api_key=${API_KEY_3}&language=ru-RU&sort_by=${sort_by}&page=${page}&primary_release_year=${year_by}&with_genres=${with_genres}`;
     const link = `${API_URL}/discover/movie?${qs.stringify(queryStringParams, {arrayFormat: 'comma'})}`;
-    this.isLoader = true
+    this.setState({
+      isLoading: true
+    });
+
     fetch(link)
       .then(response => response.json())
       .then(data => {
-        this.isLoader = false
         this.setState({
-          movies: data.results
+          movies: data.results,
+          isLoading: false
         });
         this.props.onChangeTotalPages(data.total_pages)
       });
@@ -45,26 +47,11 @@ export default class MovieList extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log('componentDidUpdate')
+    // console.log('componentDidUpdate')
     if (this.props.filters !== prevProps.filters) {
       this.props.onChangePage(1)
       this.getMovies(this.props.filters, 1)  // передаются данные которые отличаются от начальных
     }
-
-    // if (this.props.filters.sort_by !== prevProps.filters.sort_by) {
-    //   this.props.onChangePage(1)
-    //   this.getMovies(this.props.filters, 1)  // передаются данные которые отличаются от начальных
-    // }
-    //
-    // if (this.props.filters.year_by !== prevProps.filters.year_by) {
-    //   this.props.onChangePage(1)
-    //   this.getMovies(this.props.filters, 1)  // передаются данные которые отличаются от начальных
-    // }
-    //
-    // if (this.props.filters.with_genres !== prevProps.filters.with_genres) {
-    //   this.props.onChangePage(1)
-    //   this.getMovies(this.props.filters, 1)  // передаются данные которые отличаются от начальных
-    // }
 
     if (this.props.page !== prevProps.page) {
       this.getMovies(this.props.filters, this.props.page)
@@ -72,13 +59,13 @@ export default class MovieList extends Component {
   }
 
   render() {
-    const { movies } = this.state;
+    const { movies, isLoading } = this.state;
     return (
       <div className="row">
-        {this.isLoader ? (
-          <div class="d-flex justify-content-center w-100">
-            <div class="spinner-border" role="status">
-              <span class="sr-only">Loading...</span>
+        {isLoading ? (
+          <div className="d-flex justify-content-center w-100">
+            <div className="spinner-border" role="status">
+              <span className="sr-only">Loading...</span>
             </div>
           </div>
         ) :
