@@ -38,42 +38,52 @@ export default class LoginForm extends React.Component {
   }
 
   handleBlur = (event) => {
-    const errors = this.validateFields(event.target.name);
+    // const errors = this.validateFields(event.target.name);
+    const errors = this.validateFieldsSubmit();
 
-    if (Object.keys(errors).length > 0) {
-      this.setState(prevState => ({
-        errors: {
-          ...prevState.errors,       // копируем все что там было
-          ...errors                   // плюс новые
-        }
-      }));
+    const name = event.target.name
+    if (errors[name]) {
+        this.setState(prevState => ({
+          errors: {
+            ...prevState.errors,       // копируем все что там было
+            [name]: errors[name]
+          }
+        }));
     }
+    // if (Object.keys(errors).length > 0) {
+    //   this.setState(prevState => ({
+    //     errors: {
+    //       ...prevState.errors,       // копируем все что там было
+    //       ...errors                   // плюс новые
+    //     }
+    //   }));
+    // }
   }
 
-  validateFields = (name) => {
-    const errors = {};
-    switch (name) {
-      case 'username':
-        if (this.state.username === '') {
-          errors.username = 'Not empty';
-        }
-        break;
-      case 'password':
-        if (this.state.password.length < 6) {
-          errors.password = "Must be 6 characters or more"
-        }
-        break;
-      case 'repeatPassword':
-        if (this.state.password !==  this.state.repeatPassword) {
-          errors.repeatPassword = "Must be equal password"
-        }
-        break;
-      default:
-        break;
-    }
-
-    return errors;
-  }
+  // validateFields = (name) => {
+  //   const errors = {};
+  //   switch (name) {
+  //     case 'username':
+  //       if (this.state.username === '') {
+  //         errors.username = 'Not empty';
+  //       }
+  //       break;
+  //     case 'password':
+  //       if (this.state.password.length < 6) {
+  //         errors.password = "Must be 6 characters or more"
+  //       }
+  //       break;
+  //     case 'repeatPassword':
+  //       if (this.state.password !==  this.state.repeatPassword) {
+  //         errors.repeatPassword = "Must be equal password"
+  //       }
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  //
+  //   return errors;
+  // }
 
   validateFieldsSubmit() {
     const errors = {};
