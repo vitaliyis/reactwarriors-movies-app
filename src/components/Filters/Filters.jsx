@@ -2,7 +2,7 @@ import React from "react";
 import SortBy from "./SortBy";
 import YearBy from "./YearBy";
 import Pagination from "./Pagination";
-import GenresBy from "./GenresBy";
+import Genres from "./Genres";
 
 export default class Filters extends React.Component {
   render() {
@@ -31,7 +31,7 @@ export default class Filters extends React.Component {
           year_by={year_by}
           onChangeFilters={onChangeFilters}
         />
-        <GenresBy
+        <Genres
           with_genres={with_genres}
           onChangeFilters={onChangeFilters}
         />
