@@ -1,3 +1,5 @@
+import qs from 'query-string';
+
 export const API_URL = "https://api.themoviedb.org/3";
 
 export const API_KEY_3 = "0319680a47cad44caab915185985f27f";
@@ -23,4 +25,67 @@ export const fetchApi = (url, options = {}) => {
         })
       })
   })
+}
+
+export default class CallApi {
+  static get(url, options = {}) {
+    const {params = {}} = options
+    const queryStringParams = {
+      api_key: API_KEY_3,
+      ...params
+    }
+
+    // url = "/discover/movie"
+    // params = {
+    //   language: "ru-RU",
+    //   page: page,
+    //   sort_by: sort_by,
+    //   primary_release_year: year_by,
+    //   with_genres: with_genres
+    // }
+
+    return fetchApi(`${API_URL}${url}?${qs.stringify(
+      queryStringParams, {arrayFormat: 'comma'})}`,
+      {
+      mode: "cors",
+      "headers": {
+        "Content-type": "application/json"
+      }
+    })
+  }
+  static post(url, options = {}) {
+    const {params = {},body = {}} = options
+    const queryStringParams = {
+      api_key: API_KEY_3,
+      ...params
+    }
+    return fetchApi(`${API_URL}${url}?${qs.stringify(
+      queryStringParams, {arrayFormat: 'comma'})}`,
+      {
+        method: "POST",
+        mode: "cors",
+        "headers": {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(body)
+      })
+  }
+
+  static delete(url, options = {}) {
+    const {params = {},body = {}} = options
+    const queryStringParams = {
+      api_key: API_KEY_3,
+      ...params
+    }
+    return fetchApi(`${API_URL}${url}?${qs.stringify(
+      queryStringParams, {arrayFormat: 'comma'})}`,
+      {
+        method: "DELETE",
+        mode: "cors",
+        "headers": {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(body)
+      })
+  }
 }

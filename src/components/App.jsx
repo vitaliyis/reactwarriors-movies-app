@@ -7,6 +7,9 @@ import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
 
+export const AppContext = React.createContext()
+// console.log(AppContext)
+
 export default class App extends React.Component {
   constructor() {
     super()
@@ -25,6 +28,7 @@ export default class App extends React.Component {
   }
 
   updateUser = user => {
+    cookies.set("user_id", user.id)
     this.setState({
       user
     });
@@ -38,6 +42,14 @@ export default class App extends React.Component {
     this.setState({
       session_id
     });
+  }
+
+  onLogOut = () => {
+    cookies.remove("session_id")
+    this.setState({
+      session_id: null,
+      user: null
+    })
   }
 
   onChangeFilters = event => {
@@ -81,48 +93,57 @@ export default class App extends React.Component {
       fetchApi(`${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`)
         .then(user => {
           this.updateUser(user)
+          this.updateSessionId(session_id)
         })
     }
   }
 
 
   render() {
-    const {filters, page, total_pages, user} = this.state;
+    const {filters, page, total_pages, user, session_id} = this.state;
     return (
-      <div>
-        <Header
-          user={user}
-          updateUser={this.updateUser}
-          updateSessionId={this.updateSessionId}
-        />
-        <div className="container">
-          <div className="row mt-4">
-            <div className="col-4">
-              <div className="card" style={{ width: "100%" }}>
-                <div className="card-body">
-                  <h3>Фильтры:</h3>
-                  <Filters
-                    page={page}
-                    filters={filters}
-                    onChangeFilters={this.onChangeFilters}
-                    onChangePage={this.onChangePage}
-                    totalPages={total_pages}
-                    onResetFilters={this.onResetFilters}
-                  />
+      <AppContext.Provider value={{
+        user,
+        session_id,
+        updateUser: this.updateUser,
+        updateSessionId: this.updateSessionId,
+        onLogOut: this.onLogOut
+      }}>
+        <div>
+          <Header
+            user={user}
+          />
+          <div className="container">
+            <div className="row mt-4">
+              <div className="col-4">
+                <div className="card" style={{ width: "100%" }}>
+                  <div className="card-body">
+                    <h3>Фильтры:</h3>
+                    <Filters
+                      page={page}
+                      filters={filters}
+                      onChangeFilters={this.onChangeFilters}
+                      onChangePage={this.onChangePage}
+                      totalPages={total_pages}
+                      onResetFilters={this.onResetFilters}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-8">
-              <MoviesList
-                filters={filters}
-                page={page}
-                onChangePage={this.onChangePage}
-                onChangeTotalPages={this.onChangeTotalPages}
-              />
+              <div className="col-8">
+                <MoviesList
+                  user={user}
+                  session_id={session_id}
+                  filters={filters}
+                  page={page}
+                  onChangePage={this.onChangePage}
+                  onChangeTotalPages={this.onChangeTotalPages}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </AppContext.Provider>
     );
   }
 }

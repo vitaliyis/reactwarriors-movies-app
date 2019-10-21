@@ -1,17 +1,15 @@
 import React from "react";
+// import { AppContext } from "../App";
+import AppContextHOC from "../HOC/AppContextHOC"
+import UserMenu from "./UserMenu"
 
-export default class User extends React.Component {
+class User extends React.Component {
   render() {
     const {user} = this.props
     return (
-      <div>
-        <img alt=""
-          width="40"
-          className="rounded-circle"
-          src={`https://secure.gravatar.com/avatar/${
-          user.avatar.gravatar.hash
-          }.jpg?s=64"`}/>
-      </div>
+      <UserMenu user={user}/>
     )
   }
 }
+
+export default AppContextHOC(User)

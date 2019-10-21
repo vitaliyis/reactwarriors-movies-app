@@ -1,8 +1,11 @@
 import React from "react";
-import {API_KEY_3, API_URL, fetchApi} from "../../../api/api";
+// import CallApi, {API_KEY_3, API_URL, fetchApi} from "../../../api/api";
+import CallApi from "../../../api/api";
 import classNames from "classnames"
+// import { AppContext } from "../../App";
+import AppContextHOC from "../../HOC/AppContextHOC";
 
-export default class LoginForm extends React.Component {
+class LoginForm extends React.Component {
   state = {
     username: '',
     password: '',
@@ -24,22 +27,10 @@ export default class LoginForm extends React.Component {
         [name]: null
       }
     }));
-    // const errors = this.state.errors
-    // let result = Object.keys(errors).reduce((total, key) =>{
-    //   if (errors[key] !== null) {
-    //     total[key] = errors[key]
-    //   }
-    //   return total
-    // }, {})
-    // this.setState({
-    //   errors: result
-    // });
-    // console.log('result', result)
   }
 
   handleBlur = (event) => {
-    // const errors = this.validateFields(event.target.name);
-    const errors = this.validateFieldsSubmit();
+    const errors = this.validateFields();
 
     const name = event.target.name
     if (errors[name]) {
@@ -50,42 +41,9 @@ export default class LoginForm extends React.Component {
           }
         }));
     }
-    // if (Object.keys(errors).length > 0) {
-    //   this.setState(prevState => ({
-    //     errors: {
-    //       ...prevState.errors,       // копируем все что там было
-    //       ...errors                   // плюс новые
-    //     }
-    //   }));
-    // }
   }
 
-  // validateFields = (name) => {
-  //   const errors = {};
-  //   switch (name) {
-  //     case 'username':
-  //       if (this.state.username === '') {
-  //         errors.username = 'Not empty';
-  //       }
-  //       break;
-  //     case 'password':
-  //       if (this.state.password.length < 6) {
-  //         errors.password = "Must be 6 characters or more"
-  //       }
-  //       break;
-  //     case 'repeatPassword':
-  //       if (this.state.password !==  this.state.repeatPassword) {
-  //         errors.repeatPassword = "Must be equal password"
-  //       }
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  //
-  //   return errors;
-  // }
-
-  validateFieldsSubmit() {
+  validateFields() {
     const errors = {};
 
     if (this.state.username === '') {
@@ -109,40 +67,65 @@ export default class LoginForm extends React.Component {
     });
 
     try {
-      const data = await fetchApi(`${API_URL}/authentication/token/new?api_key=${API_KEY_3}`)
 
-      const result = await fetchApi(
-        `${API_URL}/authentication/token/validate_with_login?api_key=${API_KEY_3}`,
-        {
-          method: "POST",
-          mode: "cors",
-          "headers": {
-            "Content-type": "application/json"
-          },
-          body: JSON.stringify({
-            username: this.state.username,
-            password: this.state.password,
-            request_token: data.request_token
-          })
-        })
+      const data = await CallApi.get("/authentication/token/new")
 
-      const {session_id} = await fetchApi(
-        `${API_URL}/authentication/session/new?api_key=${API_KEY_3}`,
-        {
-          method: "POST",
-          mode: "cors",
-          "headers": {
-            "Content-type": "application/json"
-          },
-          body: JSON.stringify({                // объект превращаем в строку
-            request_token: result.request_token
-          })
-        })
-      console.log('session_id => ', session_id)
+      const result = await CallApi.post("/authentication/token/validate_with_login", {
+        body: {
+          username: this.state.username,
+          password: this.state.password,
+          request_token: data.request_token
+        }
+      })
+      // const result = await fetchApi(
+      //   `${API_URL}/authentication/token/validate_with_login?api_key=${API_KEY_3}`,
+      //   {
+      //     method: "POST",
+      //     mode: "cors",
+      //     "headers": {
+      //       "Content-type": "application/json"
+      //     },
+      //     body: JSON.stringify({
+      //       username: this.state.username,
+      //       password: this.state.password,
+      //       request_token: data.request_token
+      //     })
+      //   })
+
+      const {session_id} = await CallApi.post("/authentication/session/new", {
+        body: {
+          request_token: result.request_token
+        }
+      })
+      // const {session_id} = await fetchApi(
+      //   `${API_URL}/authentication/session/new?api_key=${API_KEY_3}`,
+      //   {
+      //     method: "POST",
+      //     mode: "cors",
+      //     "headers": {
+      //       "Content-type": "application/json"
+      //     },
+      //     body: JSON.stringify({                // объект превращаем в строку
+      //       request_token: result.request_token
+      //     })
+      //   })
+
       this.props.updateSessionId(session_id)
 
-      const user = await fetchApi(`${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`)
+      const user = await CallApi.get("/account", {
+        params: {
+          session_id
+        }
+      })
+      // const user = await fetchApi(`${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`)
+      console.log('user.id =>', user.id)
 
+      // const moviesFavorite = await CallApi.get(`/account/${user.id}/favorite/movies`, {
+      //   params: {
+      //     session_id
+      //   }
+      // })
+      // console.log('moviesFavorite =>', moviesFavorite)
 
       this.setState(
         {
@@ -167,8 +150,7 @@ export default class LoginForm extends React.Component {
 
   onLogin = e => {
     e.preventDefault();
-    const errors = this.validateFieldsSubmit();
-    // console.log('Object.keys(errors).length =>', Object.keys(errors).length)
+    const errors = this.validateFields();
     if (Object.keys(errors).length > 0) {
       this.setState(prevState => ({
         errors: {
@@ -189,7 +171,6 @@ export default class LoginForm extends React.Component {
 
   render() {
     const { username, password, repeatPassword, errors, submitting } = this.state;
-    // console.log('Object.keys(errors).length =>', Object.keys(errors).length)
     return (
       <div className="form-login-container">
         <form className="form-login">
@@ -261,3 +242,5 @@ export default class LoginForm extends React.Component {
     )
   }
 }
+
+export default AppContextHOC(LoginForm)
