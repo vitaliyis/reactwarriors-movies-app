@@ -4,6 +4,7 @@ import MoviesList from "./Movies/MoviesList";
 import Header from "./Header/Header";
 import {API_KEY_3, API_URL, fetchApi} from "../api/api";
 import Cookies from 'universal-cookie';
+import CallApi from "../api/api";
 
 const cookies = new Cookies();
 
@@ -23,8 +24,17 @@ export default class App extends React.Component {
         with_genres : []
       },
       page: 1,
-      total_pages: ""
+      total_pages: "",
+      showLoginModal: false,
+      moviesFavorite: [],
+      moviesWatchlist: []
     }
+  }
+
+  toggleLoginModal = () => {
+    this.setState(prevState => ({
+      showLoginModal: !prevState.showLoginModal
+    }));
   }
 
   updateUser = user => {
@@ -48,8 +58,11 @@ export default class App extends React.Component {
     cookies.remove("session_id")
     this.setState({
       session_id: null,
-      user: null
+      user: null,
+      moviesFavorite: [],
+      moviesWatchlist: []
     })
+    // this.toggleLoginModal()
   }
 
   onChangeFilters = event => {
@@ -87,6 +100,37 @@ export default class App extends React.Component {
     })
   }
 
+  getFavorite = (session_id, id) => {
+    if (session_id){
+      CallApi.get(`/account/${id}/favorite/movies`, {
+        params: {
+          session_id: session_id
+        }
+      })
+        .then(data => {
+          this.setState({
+            moviesFavorite: data.results
+          })
+          // this.getMoviesResult()
+        })
+    }
+  }
+
+  getWatchlist = (session_id, id) => {
+    if (session_id){
+      CallApi.get(`/account/${id}/watchlist/movies`, {
+        params: {
+          session_id: session_id
+        }
+      })
+        .then(data => {
+          this.setState({
+            moviesWatchlist: data.results
+          })
+        })
+    }
+  }
+
   componentDidMount() {
     const session_id = cookies.get("session_id")
     if (session_id) {
@@ -94,20 +138,43 @@ export default class App extends React.Component {
         .then(user => {
           this.updateUser(user)
           this.updateSessionId(session_id)
+          this.getFavorite(session_id, user.id)
+          this.getWatchlist(session_id, user.id)
         })
     }
   }
 
+  // componentDidUpdate() {
+  //   if (this.state.session_id) {
+  //     this.getFavorite()
+  //   }
+  // }
+
 
   render() {
-    const {filters, page, total_pages, user, session_id} = this.state;
+    const {
+      filters,
+      page,
+      total_pages,
+      user,
+      session_id,
+      showLoginModal,
+      moviesFavorite,
+      moviesWatchlist
+    } = this.state;
     return (
       <AppContext.Provider value={{
         user,
         session_id,
         updateUser: this.updateUser,
         updateSessionId: this.updateSessionId,
-        onLogOut: this.onLogOut
+        onLogOut: this.onLogOut,
+        showLoginModal,
+        toggleLoginModal: this.toggleLoginModal,
+        getFavorite: this.getFavorite,
+        getWatchlist: this.getWatchlist,
+        moviesFavorite,
+        moviesWatchlist
       }}>
         <div>
           <Header

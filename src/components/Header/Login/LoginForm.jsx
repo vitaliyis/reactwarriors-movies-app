@@ -77,38 +77,12 @@ class LoginForm extends React.Component {
           request_token: data.request_token
         }
       })
-      // const result = await fetchApi(
-      //   `${API_URL}/authentication/token/validate_with_login?api_key=${API_KEY_3}`,
-      //   {
-      //     method: "POST",
-      //     mode: "cors",
-      //     "headers": {
-      //       "Content-type": "application/json"
-      //     },
-      //     body: JSON.stringify({
-      //       username: this.state.username,
-      //       password: this.state.password,
-      //       request_token: data.request_token
-      //     })
-      //   })
 
       const {session_id} = await CallApi.post("/authentication/session/new", {
         body: {
           request_token: result.request_token
         }
       })
-      // const {session_id} = await fetchApi(
-      //   `${API_URL}/authentication/session/new?api_key=${API_KEY_3}`,
-      //   {
-      //     method: "POST",
-      //     mode: "cors",
-      //     "headers": {
-      //       "Content-type": "application/json"
-      //     },
-      //     body: JSON.stringify({                // объект превращаем в строку
-      //       request_token: result.request_token
-      //     })
-      //   })
 
       this.props.updateSessionId(session_id)
 
@@ -119,13 +93,8 @@ class LoginForm extends React.Component {
       })
       // const user = await fetchApi(`${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`)
       console.log('user.id =>', user.id)
-
-      // const moviesFavorite = await CallApi.get(`/account/${user.id}/favorite/movies`, {
-      //   params: {
-      //     session_id
-      //   }
-      // })
-      // console.log('moviesFavorite =>', moviesFavorite)
+      this.props.getFavorite(session_id, user.id)
+      this.props.getWatchlist(session_id, user.id)
 
       this.setState(
         {
@@ -134,6 +103,7 @@ class LoginForm extends React.Component {
         () => {
           this.props.updateUser(user)
           console.log('user => ', user)
+          this.props.toggleLoginModal()
         }
       );
 

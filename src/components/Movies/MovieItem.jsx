@@ -1,7 +1,8 @@
 import React from "react";
-import Icon from '@material-ui/core/Icon';
 import AppContextHOC from "../HOC/AppContextHOC";
 import CallApi from "../../api/api";
+import FavoriteIcon from "./FavoriteIcon"
+import WatchlistIcon from "./WatchlistIcon"
 
 class MovieItem extends React.Component {
 
@@ -59,18 +60,10 @@ class MovieItem extends React.Component {
           <h6 className="card-title">{item.title}</h6>
           <div className="card-text">Рейтинг: {item.vote_average}</div>
           <div className="card-text">Media_id: {item.id}</div>
-          {this.props.user &&
             <div className="d-flex mt-3">
-              <div onClick={() => this.toggleFavorite(item.id, this.state.favorite)}>
-                {this.state.favorite ? <Icon>favorite</Icon> : <Icon>favorite_border</Icon>}
-              </div>
-              <div onClick={() => this.toggleWatchlist(item.id, this.state.watchlist)}>
-                {this.state.watchlist ? <Icon>bookmark</Icon> : <Icon>bookmark_border</Icon>}
-              </div>
+              <FavoriteIcon item={item}/>
+              <WatchlistIcon item={item}/>
             </div>
-          }
-
-
         </div>
       </div>
     );
