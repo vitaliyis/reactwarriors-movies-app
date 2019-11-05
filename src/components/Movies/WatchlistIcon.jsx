@@ -38,7 +38,7 @@ class WatchlistIcon extends React.Component {
   render() {
     this.markWatchlist = this.getOneWatchlist()
     return (
-      <Icon onClick={this.toggleWatchlist}>
+      <Icon onClick={this.toggleWatchlist} style={{color: '#fa3a3a', ...this.props.style}}>
         { this.markWatchlist ? "bookmark" : "bookmark_border"}
       </Icon>
     )

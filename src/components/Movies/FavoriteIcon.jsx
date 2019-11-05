@@ -38,7 +38,7 @@ class FavoriteIcon extends React.Component {
   render() {
     this.markFavorite = this.getOneFavorite()
     return (
-      <Icon onClick={this.toggleFavorite}>
+      <Icon onClick={this.toggleFavorite} style={{color: '#fa3ad8', ...this.props.style}}>
         { this.markFavorite ? "favorite" : "favorite_border"}
       </Icon>
     )
