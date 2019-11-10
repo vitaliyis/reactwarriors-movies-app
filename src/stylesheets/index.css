@@ -21,3 +21,7 @@ a:hover {
 .img-actors-avatar {
   height: 213px;
 }
+
+.movie-preview-img-width {
+  max-width: 540px;
+}

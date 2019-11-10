@@ -1,6 +1,7 @@
 import React from 'react';
 import CallApi from "../../../api/api";
-import DefaultAvatar from "./shadow.png"
+import DefaultAvatar from "../../../images/shadow.png"
+import Image from "../../UI/Image";
 
 class MovieCredits extends React.Component {
   state = {
@@ -15,7 +16,7 @@ class MovieCredits extends React.Component {
 
     CallApi.get(`/movie/${this.props.match.params.id}/credits`)
       .then(data => {
-        console.log('data MovieCredits=> ', data.cast)
+        // console.log('data MovieCredits=> ', data.cast)
         this.setState({
           actors: data.cast,
           isLoading: false
@@ -40,12 +41,17 @@ class MovieCredits extends React.Component {
             {actors.length ? actors.map((item, index) => {
               return (
                 <div className="card" style={{width: '9.8rem'}} key={index}>
-                  <img src={item.profile_path ? `https://image.tmdb.org/t/p/w500${item.profile_path}` : DefaultAvatar}
-                       className="card-img-top img-actors-avatar" alt=""/>
+                  {/*<img src={item.profile_path ? `https://image.tmdb.org/t/p/w500${item.profile_path}` : DefaultAvatar}*/}
+                       {/*className="card-img-top img-actors-avatar" alt=""/>*/}
+                  <Image
+                    path={item.profile_path}
+                    defaultAvatar={DefaultAvatar}
+                    className="card-img-top img-actors-avatar"
+                  />
                   <div className="card-body">
                     <p className="card-text">
-                      <span style={{fontWeight: 'bold', display: 'block'}}>{item.name}</span>
-                      <span style={{display: 'block'}}>{item.character}</span>
+                      <span className="font-weight-bold d-block">{item.name}</span>
+                      <span className="d-block">{item.character}</span>
                     </p>
                   </div>
                 </div>

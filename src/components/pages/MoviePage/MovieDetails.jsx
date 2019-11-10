@@ -1,29 +1,28 @@
 import React from 'react';
-import CallApi from "../../../api/api";
 
-class MovieDetail extends React.Component {
-  state = {
-    movie: {},
-    isLoading: false
-  }
-
-  componentDidMount() {
-    this.setState({
-      isLoading: true
-    });
-
-    CallApi.get(`/movie/${this.props.match.params.id}`)
-      .then(data => {
-        console.log('data MovieDetail=> ', data)
-        this.setState({
-          movie: data,
-          isLoading: false
-        })
-      })
-  }
+class MovieDetails extends React.Component {
+  // state = {
+  //   movie: {},
+  //   isLoading: false
+  // }
+  //
+  // componentDidMount() {
+  //   this.setState({
+  //     isLoading: true
+  //   });
+  //
+  //   CallApi.get(`/movie/${this.props.match.params.id}`)
+  //     .then(data => {
+  //       console.log('data MovieDetail=> ', data)
+  //       this.setState({
+  //         movie: data,
+  //         isLoading: false
+  //       })
+  //     })
+  // }
 
   render() {
-    const {movie, isLoading} = this.state
+    const {movie, isLoading} = this.props
     return (
       <div className="mt-3">
         {isLoading ? (
@@ -68,7 +67,7 @@ class MovieDetail extends React.Component {
 
               <td>{movie.production_companies
                 ? movie.production_companies.map(
-                  (item, index) => <p key={index} style={{fontStyle: 'italic'}}>"{item.name}"</p>)
+                  (item, index) => <p key={index} className="font-italic">"{item.name}"</p>)
                 : null}
               </td>
             </tr>
@@ -76,7 +75,7 @@ class MovieDetail extends React.Component {
               <th scope="row">Жанры</th>
               <td>{movie.genres
                 ? movie.genres.map(
-                  (item, index) => <p key={index} style={{textTransform: 'uppercase'}}>{item.name}</p>)
+                  (item, index) => <p key={index} className="text-uppercase">{item.name}</p>)
                 : null}
               </td>
             </tr>
@@ -88,4 +87,4 @@ class MovieDetail extends React.Component {
   }
 }
 
-export default MovieDetail
+export default MovieDetails

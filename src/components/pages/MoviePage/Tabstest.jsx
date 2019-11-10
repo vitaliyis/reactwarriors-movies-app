@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
-import MovieDetail from './MovieDetail'
+import MovieDetail from './MovieDetails'
 import MovieVideos from "./MovieVideos";
 import MovieCredits from "./MovieCredits";
 import { Route } from 'react-router-dom'

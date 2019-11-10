@@ -14,7 +14,7 @@ class MovieVideos extends React.Component {
 
     CallApi.get(`/movie/${this.props.match.params.id}/videos`)
       .then(data => {
-        console.log('data MovieVideos=> ', data.results)
+        // console.log('data MovieVideos=> ', data.results)
         this.setState({
           movies: data.results,
           isLoading: false

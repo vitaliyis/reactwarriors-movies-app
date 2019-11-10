@@ -59,18 +59,6 @@ export default class App extends React.Component {
     // this.toggleLoginModal()
   }
 
-  // onResetFilters = () => {
-  //   this.setState({
-  //     filters: {
-  //       sort_by: "popularity.desc",
-  //       year_by: "",
-  //       with_genres : []
-  //     },
-  //     page: 1,
-  //     total_pages: ""
-  //   })
-  // }
-
   getFavorite = (session_id, id) => {
     if (session_id){
       CallApi.get(`/account/${id}/favorite/movies`, {

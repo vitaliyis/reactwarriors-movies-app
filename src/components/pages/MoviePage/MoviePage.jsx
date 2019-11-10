@@ -1,53 +1,59 @@
 import React from 'react';
 import CallApi from "../../../api/api";
-import FavoriteIcon from "../../Movies/FavoriteIcon"
-import WatchlistIcon from "../../Movies/WatchlistIcon"
 import Tabs from "./Tabs";
+import MovieDetails from "./MovieDetails";
+import MovieVideos from "./MovieVideos";
+import MovieCredits from "./MovieCredits";
+import {Switch, Route, Redirect} from "react-router-dom";
+import {Row, Col } from "reactstrap";
+import MoviePreview from "./MoviePreview";
 
 class MoviePage extends React.Component{
 
   state = {
-    movie: {}
+    movie: {},
+    isLoading: false
   }
 
   componentDidMount() {
+    this.setState({
+      isLoading: true
+    });
+
     CallApi.get(`/movie/${this.props.match.params.id}`)
       .then(data => {
         // console.log('data => ', data)
         this.setState({
-          movie: data
+          movie: data,
+          isLoading: false
         })
       })
   }
 
   render() {
-    const { movie } = this.state
+    const { movie, isLoading } = this.state
 
     return (
       <div className="container mt-4">
-        <div className="card mb-3">
-          <div className="row no-gutters">
-            <div className="col-md-4">
-              <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                className="card-img"
-                alt=""
-                style={{maxWidth: "540px"}}
-              />
-            </div>
-            <div className="col-md-8">
-              <div className="card-body">
-                <h3 className="card-title">{movie.original_title}</h3>
-                <p className="card-text movie-page-card-text">{movie.overview}</p>
-                <div className="d-flex mt-3">
-                  <FavoriteIcon item={movie} style={{fontSize: "2.5rem"}}/>
-                  <WatchlistIcon item={movie} style={{fontSize: "2.5rem"}}/>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <Tabs movieId={movie.id}/>
+        <MoviePreview
+          movie={movie}
+        />
+        <Tabs />
+        <Row>
+          <Col sm="12">
+            <Switch>
+              <Route path="/movie/:id/details"
+                     render={() =>
+                         <MovieDetails
+                          movie={movie}
+                          isLoading={isLoading}
+                         />}/>
+              <Route path="/movie/:id/videos" component={MovieVideos}/>
+              <Route path="/movie/:id/credits" component={MovieCredits}/>
+              <Redirect to={`/movie/${this.props.match.params.id}/details`}/>
+            </Switch>
+          </Col>
+        </Row>
       </div>
 
     );
