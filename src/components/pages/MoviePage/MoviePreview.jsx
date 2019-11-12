@@ -12,6 +12,7 @@ const MoviePreview = (props) => {
           <Image
             path={movie.poster_path}
             className="card-img movie-preview-img-width"
+            alt=""
           />
         </div>
         <div className="col-md-8">

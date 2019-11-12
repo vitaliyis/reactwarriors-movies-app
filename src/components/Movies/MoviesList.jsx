@@ -2,16 +2,12 @@ import React from "react";
 import MovieItem from "./MovieItem";
 import PropTypes from "prop-types";
 import MoviesHOC from "./MoviesHOC"
+import Spinner from "../UI/Spinner";
 
 const MoviesList = ({movies, isLoading}) => (
     <div className="row">
-      {isLoading ? (
-          <div className="d-flex justify-content-center w-100">
-            <div className="spinner-border" role="status">
-              <span className="sr-only">Loading...</span>
-            </div>
-          </div>
-        ) :
+      {isLoading ? <Spinner/>
+        :
         movies.map(movie => {
           return (
             <div key={movie.id} className="col-6 mb-4">

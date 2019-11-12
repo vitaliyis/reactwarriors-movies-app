@@ -62,6 +62,7 @@ export default Component =>
     const { movies, isLoading } = this.state;
     return (
       <Component
+        {...this.props}
         movies={movies}
         isLoading={isLoading}
       />

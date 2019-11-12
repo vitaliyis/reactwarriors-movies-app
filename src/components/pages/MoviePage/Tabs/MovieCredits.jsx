@@ -1,7 +1,8 @@
 import React from 'react';
-import CallApi from "../../../api/api";
-import DefaultAvatar from "../../../images/shadow.png"
-import Image from "../../UI/Image";
+import CallApi from "../../../../api/api";
+import DefaultAvatar from "../../../../images/shadow.png"
+import Image from "../../../UI/Image";
+import Spinner from "../../../UI/Spinner";
 
 class MovieCredits extends React.Component {
   state = {
@@ -29,14 +30,8 @@ class MovieCredits extends React.Component {
     return (
       <div className="mt-3">
       {
-        isLoading ? (
-            <div className="d-flex justify-content-center w-100">
-              <div className="spinner-border" role="status">
-                <span className="sr-only">Loading...</span>
-              </div>
-            </div>
-          ) :
-
+        isLoading ? <Spinner/>
+          :
           <div className="d-flex flex-wrap">
             {actors.length ? actors.map((item, index) => {
               return (
@@ -47,6 +42,7 @@ class MovieCredits extends React.Component {
                     path={item.profile_path}
                     defaultAvatar={DefaultAvatar}
                     className="card-img-top img-actors-avatar"
+                    alt=""
                   />
                   <div className="card-body">
                     <p className="card-text">

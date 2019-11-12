@@ -1,14 +1,14 @@
 import React from 'react'
 
-const Image = (props) => {
-  const { path, className, defaultAvatar = null} = props
+// React.memo - аналог pureComponent, если придут теже пропсы то перерендеринга не будет
+const Image = React.memo(props => {
+  const { path, defaultAvatar = null, ...rest} = props
   return(
     <img
       src={path ? `https://image.tmdb.org/t/p/w500${path}` : defaultAvatar}
-      className={className}
-      alt=""
+      {...rest}
     />
   )
-}
+})
 
 export default Image
