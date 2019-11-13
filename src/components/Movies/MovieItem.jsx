@@ -1,8 +1,8 @@
 import React from "react";
 import AppContextHOC from "../HOC/AppContextHOC";
-import CallApi from "../../api/api";
 import FavoriteIcon from "./FavoriteIcon"
 import WatchlistIcon from "./WatchlistIcon"
+import {Link} from 'react-router-dom'
 
 class MovieItem extends React.Component {
 
@@ -11,43 +11,42 @@ class MovieItem extends React.Component {
     watchlist: this.props.item.watchlist
   }
 
-  toggleFavorite = (id, favorite) => {
-    CallApi.post(`/account/${this.props.user.id}/favorite`, {
-      params: {
-        session_id: this.props.session_id
-      },
-      body: {
-        "media_type": "movie",
-        "media_id": id,
-        "favorite": !favorite
-      }
-    })
+  // toggleFavorite = (id, favorite) => {
+  //   CallApi.post(`/account/${this.props.user.id}/favorite`, {
+  //     params: {
+  //       session_id: this.props.session_id
+  //     },
+  //     body: {
+  //       "media_type": "movie",
+  //       "media_id": id,
+  //       "favorite": !favorite
+  //     }
+  //   })
+  //
+  //   this.setState(prev => ({
+  //     favorite: !prev.favorite
+  //   }))
+  // }
 
-    this.setState(prev => ({
-      favorite: !prev.favorite
-    }))
-  }
-
-  toggleWatchlist = (id, watchlist) => {
-    CallApi.post(`/account/${this.props.user.id}/watchlist`, {
-      params: {
-        session_id: this.props.session_id
-      },
-      body: {
-        "media_type": "movie",
-        "media_id": id,
-        "watchlist": !watchlist
-      }
-    })
-
-    this.setState(prev => ({
-      watchlist: !prev.watchlist
-    }))
-  }
+  // toggleWatchlist = (id, watchlist) => {
+  //   CallApi.post(`/account/${this.props.user.id}/watchlist`, {
+  //     params: {
+  //       session_id: this.props.session_id
+  //     },
+  //     body: {
+  //       "media_type": "movie",
+  //       "media_id": id,
+  //       "watchlist": !watchlist
+  //     }
+  //   })
+  //
+  //   this.setState(prev => ({
+  //     watchlist: !prev.watchlist
+  //   }))
+  // }
 
   render() {
     const { item } = this.props;
-    // console.log('user111', user)
     return (
       <div className="card" style={{ width: "100%" }}>
         <img
@@ -57,7 +56,9 @@ class MovieItem extends React.Component {
           alt=""
         />
         <div className="card-body">
-          <h6 className="card-title">{item.title}</h6>
+          <Link className="card-title" to={`/movie/${item.id}`}>
+            {item.title}
+          </Link>
           <div className="card-text">Рейтинг: {item.vote_average}</div>
           <div className="card-text">Media_id: {item.id}</div>
             <div className="d-flex mt-3">

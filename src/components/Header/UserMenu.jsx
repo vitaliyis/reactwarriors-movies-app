@@ -2,6 +2,7 @@ import React from 'react';
 import {Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from "reactstrap"
 import AppContextHOC from "../HOC/AppContextHOC"
 import CallApi from "../../api/api";
+import DefaultAvatar from "../../images/shadow.png"
 
 class UserMenu extends React.Component{
   state = {
@@ -53,9 +54,9 @@ class UserMenu extends React.Component{
             alt=""
             width="40"
             className="rounded-circle"
-            src={`https://secure.gravatar.com/avatar/${
+            src={user.avatar.gravatar.hash ? `https://secure.gravatar.com/avatar/${
               user.avatar.gravatar.hash
-              }.jpg?s=64"`}
+              }.jpg?s=64"` : DefaultAvatar}
             onClick={this.toggleDropdown}
           />
         </DropdownToggle>

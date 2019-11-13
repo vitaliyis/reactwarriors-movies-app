@@ -1,10 +1,11 @@
 import React from "react";
-import Filters from "./Filters/Filters";
-import MoviesList from "./Movies/MoviesList";
 import Header from "./Header/Header";
 import {API_KEY_3, API_URL, fetchApi} from "../api/api";
 import Cookies from 'universal-cookie';
 import CallApi from "../api/api";
+import MoviesPage from "./pages/MoviesPage/MoviesPage"
+import MoviePage from "./pages/MoviePage/MoviePage"
+import { BrowserRouter, Route } from 'react-router-dom'
 
 const cookies = new Cookies();
 
@@ -18,13 +19,6 @@ export default class App extends React.Component {
     this.state = {
       user: null,
       session_id: null,
-      filters: {
-        sort_by: "popularity.desc",
-        year_by: "",
-        with_genres : []
-      },
-      page: 1,
-      total_pages: "",
       showLoginModal: false,
       moviesFavorite: [],
       moviesWatchlist: []
@@ -63,41 +57,6 @@ export default class App extends React.Component {
       moviesWatchlist: []
     })
     // this.toggleLoginModal()
-  }
-
-  onChangeFilters = event => {
-    const name = event.target.name
-    const value = event.target.value
-    this.setState(state => ({
-      filters: {
-        ...state.filters,
-        [name]: value
-      }
-    }))
-  }
-
-  onChangePage = page => {
-    this.setState({
-      page
-    })
-  }
-
-  onChangeTotalPages = totalPages => {
-    this.setState({
-      total_pages: totalPages
-    })
-  }
-
-  onResetFilters = () => {
-    this.setState({
-      filters: {
-        sort_by: "popularity.desc",
-        year_by: "",
-        with_genres : []
-      },
-      page: 1,
-      total_pages: ""
-    })
   }
 
   getFavorite = (session_id, id) => {
@@ -144,18 +103,8 @@ export default class App extends React.Component {
     }
   }
 
-  // componentDidUpdate() {
-  //   if (this.state.session_id) {
-  //     this.getFavorite()
-  //   }
-  // }
-
-
   render() {
     const {
-      filters,
-      page,
-      total_pages,
       user,
       session_id,
       showLoginModal,
@@ -163,54 +112,35 @@ export default class App extends React.Component {
       moviesWatchlist
     } = this.state;
     return (
-      <AppContext.Provider value={{
-        user,
-        session_id,
-        updateUser: this.updateUser,
-        updateSessionId: this.updateSessionId,
-        onLogOut: this.onLogOut,
-        showLoginModal,
-        toggleLoginModal: this.toggleLoginModal,
-        getFavorite: this.getFavorite,
-        getWatchlist: this.getWatchlist,
-        moviesFavorite,
-        moviesWatchlist
-      }}>
-        <div>
-          <Header
-            user={user}
-          />
-          <div className="container">
-            <div className="row mt-4">
-              <div className="col-4">
-                <div className="card" style={{ width: "100%" }}>
-                  <div className="card-body">
-                    <h3>Фильтры:</h3>
-                    <Filters
-                      page={page}
-                      filters={filters}
-                      onChangeFilters={this.onChangeFilters}
-                      onChangePage={this.onChangePage}
-                      totalPages={total_pages}
-                      onResetFilters={this.onResetFilters}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="col-8">
-                <MoviesList
-                  user={user}
-                  session_id={session_id}
-                  filters={filters}
-                  page={page}
-                  onChangePage={this.onChangePage}
-                  onChangeTotalPages={this.onChangeTotalPages}
-                />
-              </div>
-            </div>
+      <BrowserRouter>
+        <AppContext.Provider value={{
+          user,
+          session_id,
+          updateUser: this.updateUser,
+          updateSessionId: this.updateSessionId,
+          onLogOut: this.onLogOut,
+          showLoginModal,
+          toggleLoginModal: this.toggleLoginModal,
+          getFavorite: this.getFavorite,
+          getWatchlist: this.getWatchlist,
+          moviesFavorite,
+          moviesWatchlist
+        }}>
+          <div>
+            <Header
+              user={user}
+            />
+            <Route exact path="/" component={MoviesPage}/>
+            <Route path="/movie/:id" component={MoviePage}/>
+            {/*
+            "/" - MoviesPage
+            "/movie" - Movie
+            "/movie/1" - Movie with id = 1
+          */}
           </div>
-        </div>
-      </AppContext.Provider>
+        </AppContext.Provider>
+      </BrowserRouter>
+
     );
   }
 }
