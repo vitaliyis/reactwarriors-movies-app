@@ -23,6 +23,7 @@ class MovieDetails extends React.Component {
 
   render() {
     const {movie} = this.props
+    console.log('movie => ', movie)
     return (
       <div className="mt-3">
         <table className="table">
@@ -45,7 +46,7 @@ class MovieDetails extends React.Component {
           </tr>
           <tr>
             <th scope="row">Страна</th>
-            <td>{movie.production_countries ? movie.production_countries[0].name : null}</td>
+            <td>{movie.production_countries.length ? movie.production_countries[0].name : null}</td>
           </tr>
           <tr>
             <th scope="row">Бюджет</th>
