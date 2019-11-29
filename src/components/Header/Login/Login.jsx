@@ -39,6 +39,7 @@ class Login extends React.Component {
         <button
           className="btn btn-success"
           type="button"
+          // onClick={() => toggleLoginModal(showLoginModal)} //****************
           onClick={toggleLoginModal}
         >
           Login

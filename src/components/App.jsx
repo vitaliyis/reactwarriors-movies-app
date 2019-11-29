@@ -1,63 +1,90 @@
 import React from "react";
 import Header from "./Header/Header";
-import {API_KEY_3, API_URL, fetchApi} from "../api/api";
 import Cookies from 'universal-cookie';
 import CallApi from "../api/api";
 import MoviesPage from "./pages/MoviesPage/MoviesPage"
 import MoviePage from "./pages/MoviePage/MoviePage"
 import { BrowserRouter, Route } from 'react-router-dom'
+import {
+  actionCreatorLogOut,
+  actionCreatorMoviesFavorite,
+  actionCreatorMoviesWatchlist,
+  actionCreatorShowLoginModal,
+  actionCreatorUpdateAuth
+} from "../actions/actions";
+import { connect } from "react-redux"
 
 const cookies = new Cookies();
 
 export const AppContext = React.createContext()
-// console.log(AppContext)
 
-export default class App extends React.Component {
-  constructor() {
-    super()
+class App extends React.Component {
+  // constructor() {
+  //   super()
+  //
+  //   this.state = {
+  //     user: null,
+  //     session_id: null,
+  //     showLoginModal: false,
+  //     moviesFavorite: [],
+  //     moviesWatchlist: []
+  //   }
+  // }
 
-    this.state = {
-      user: null,
-      session_id: null,
-      showLoginModal: false,
-      moviesFavorite: [],
-      moviesWatchlist: []
-    }
-  }
+  // toggleLoginModal = () => {
+    // this.setState(prevState => ({
+    //   showLoginModal: !prevState.showLoginModal
+    // }));
+  // }
 
-  toggleLoginModal = () => {
-    this.setState(prevState => ({
-      showLoginModal: !prevState.showLoginModal
-    }));
-  }
+  // toggleLoginModal = () => {
+  //   console.log('this.props.store.getState().showLoginModal', this.props.store.getState().showLoginModal)
+  //   this.props.store.dispatch(
+  //     actionCreatorShowLoginModal({
+  //       showLoginModal: !this.props.store.getState().showLoginModal
+  //     })
+  //   )
+  // }
 
-  updateUser = user => {
-    cookies.set("user_id", user.id)
-    this.setState({
-      user
-    });
-  }
+  // updateAuth = (user, session_id) => {
+  //   this.props.store.dispatch(
+  //     actionCreatorUpdateAuth({
+  //       user,
+  //       session_id
+  //     })
+  //   )
+  // }
 
-  updateSessionId = session_id => {
-    cookies.set("session_id", session_id, {
-      path: "/",
-      maxAge: 2592000
-    })
-    this.setState({
-      session_id
-    });
-  }
+  // updateUser = user => {
+  //   cookies.set("user_id", user.id)
+  //   this.setState({
+  //     user
+  //   });
+  // }
+  //
+  // updateSessionId = session_id => {
+  //   cookies.set("session_id", session_id, {
+  //     path: "/",
+  //     maxAge: 2592000
+  //   })
+  //   this.setState({
+  //     session_id
+  //   });
+  // }
 
-  onLogOut = () => {
-    cookies.remove("session_id")
-    this.setState({
-      session_id: null,
-      user: null,
-      moviesFavorite: [],
-      moviesWatchlist: []
-    })
-    // this.toggleLoginModal()
-  }
+  // onLogOut = () => {
+  //   this.props.store.dispatch(actionCreatorLogOut())
+  //
+  //
+  //   // cookies.remove("session_id")
+  //   // this.setState({
+  //   //   session_id: null,
+  //   //   user: null,
+  //   //   moviesFavorite: [],
+  //   //   moviesWatchlist: []
+  //   // })
+  //   // // this.toggleLoginModal()
+  // }
 
   getFavorite = (session_id, id) => {
     if (session_id){
@@ -67,10 +94,10 @@ export default class App extends React.Component {
         }
       })
         .then(data => {
-          this.setState({
-            moviesFavorite: data.results
-          })
-          // this.getMoviesResult()
+          this.props.updateMoviesFavorite(data.results)
+          // this.setState({
+          //   moviesFavorite: data.results
+          // })
         })
     }
   }
@@ -83,48 +110,69 @@ export default class App extends React.Component {
         }
       })
         .then(data => {
-          this.setState({
-            moviesWatchlist: data.results
-          })
+          this.props.updateMoviesWatchlist(data.results)
+          // this.setState({
+          //   moviesWatchlist: data.results
+          // })
         })
     }
   }
 
   componentDidMount() {
-    const session_id = cookies.get("session_id")
+    const {session_id} = this.props
+
     if (session_id) {
-      fetchApi(`${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`)
-        .then(user => {
-          this.updateUser(user)
-          this.updateSessionId(session_id)
-          this.getFavorite(session_id, user.id)
-          this.getWatchlist(session_id, user.id)
+      CallApi.get("/account", {
+        params: {
+          session_id
+        }
+      }).then(user => {
+          this.props.updateAuth(user, session_id)     // занесли данные о user в state
+          this.getFavorite(session_id, user.id)   // server favorite -> state
+          this.getWatchlist(session_id, user.id)  // server watchlist -> state
         })
     }
+
+
+
+    // const session_id = cookies.get("session_id")
+    // if (session_id) {
+    //   fetchApi(`${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`)
+    //     .then(user => {
+    //       this.updateUser(user)     // занесли данные о user в state
+    //       this.updateSessionId(session_id)    // session_id -> state
+    //       this.getFavorite(session_id, user.id)   // server favorite -> state
+    //       this.getWatchlist(session_id, user.id)  // server watchlist -> state
+    //     })
+    // }
   }
 
   render() {
+    console.log('this.props => ', this.props)
     const {
       user,
       session_id,
       showLoginModal,
       moviesFavorite,
-      moviesWatchlist
-    } = this.state;
+      moviesWatchlist,
+      updateAuth,
+      onLogOut,
+      toggleLoginModal
+    } = this.props;
     return (
       <BrowserRouter>
         <AppContext.Provider value={{
           user,
           session_id,
-          updateUser: this.updateUser,
-          updateSessionId: this.updateSessionId,
-          onLogOut: this.onLogOut,
           showLoginModal,
-          toggleLoginModal: this.toggleLoginModal,
-          getFavorite: this.getFavorite,
-          getWatchlist: this.getWatchlist,
           moviesFavorite,
-          moviesWatchlist
+          moviesWatchlist,
+          updateUser: updateAuth,
+          // updateSessionId: this.updateSessionId,
+          onLogOut: onLogOut,
+          toggleLoginModal: toggleLoginModal,
+          getFavorite: this.getFavorite,
+          getWatchlist: this.getWatchlist
         }}>
           <div>
             <Header
@@ -144,3 +192,33 @@ export default class App extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  console.log('state=> ', state)
+  return {
+    user: state.reducerAuth.user,
+    session_id: state.reducerAuth.session_id,
+    showLoginModal: state.reducerAuth.showLoginModal,
+    moviesFavorite: state.reducerAuth.moviesFavorite,
+    moviesWatchlist: state.reducerAuth.moviesWatchlist
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateAuth: (user, session_id) => dispatch(actionCreatorUpdateAuth({
+      user,
+      session_id
+    })),
+    onLogOut: () => dispatch(actionCreatorLogOut()),
+    toggleLoginModal: () => dispatch(actionCreatorShowLoginModal()),
+    updateMoviesFavorite: (moviesFavorite) => dispatch(actionCreatorMoviesFavorite({
+      moviesFavorite
+    })),
+    updateMoviesWatchlist: (moviesWatchlist) => dispatch(actionCreatorMoviesWatchlist({
+      moviesWatchlist
+    }))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)

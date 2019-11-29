@@ -84,7 +84,7 @@ class LoginForm extends React.Component {
         }
       })
 
-      this.props.updateSessionId(session_id)
+      // this.props.updateSessionId(session_id)
 
       const user = await CallApi.get("/account", {
         params: {
@@ -101,7 +101,7 @@ class LoginForm extends React.Component {
         submitting: false
         },
         () => {
-          this.props.updateUser(user)
+          this.props.updateUser(user, session_id)
           console.log('user => ', user)
           this.props.toggleLoginModal()
         }
