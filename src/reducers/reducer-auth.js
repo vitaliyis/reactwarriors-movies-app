@@ -23,12 +23,7 @@ const reducerAuth = (state = initialState, action) => {
         user: action.payload.user,
         session_id: action.payload.session_id
       }
-    // case "SHOW_LOGIN_MODAL":
-    //   return {
-    //     ...state,
-    //     showLoginModal: action.payload.showLoginModal
-    //   }
-    case "SHOW_LOGIN_MODAL":
+    case "TOGGLE_LOGIN_MODAL":
       return {
         ...state,
         showLoginModal: !state.showLoginModal

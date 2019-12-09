@@ -1,16 +1,16 @@
 import React from "react";
 import Header from "./Header/Header";
 import Cookies from 'universal-cookie';
-import CallApi from "../api/api";
 import MoviesPage from "./pages/MoviesPage/MoviesPage"
 import MoviePage from "./pages/MoviePage/MoviePage"
 import { BrowserRouter, Route } from 'react-router-dom'
 import {
   actionCreatorLogOut,
-  actionCreatorMoviesFavorite,
-  actionCreatorMoviesWatchlist,
-  actionCreatorShowLoginModal,
-  actionCreatorUpdateAuth
+  actionCreatorToggleLoginModal,
+  actionCreatorUpdateAuth,
+  getFavoriteThunkCreator,
+  getUserThunkCreator,
+  getWatchlistThunkCreator
 } from "../actions/actions";
 import { connect } from "react-redux"
 
@@ -86,52 +86,47 @@ class App extends React.Component {
   //   // // this.toggleLoginModal()
   // }
 
-  getFavorite = (session_id, id) => {
-    if (session_id){
-      CallApi.get(`/account/${id}/favorite/movies`, {
-        params: {
-          session_id: session_id
-        }
-      })
-        .then(data => {
-          this.props.updateMoviesFavorite(data.results)
-          // this.setState({
-          //   moviesFavorite: data.results
-          // })
-        })
-    }
-  }
+  // getFavorite = (session_id, id) => {
+  //   if (session_id){
+  //     CallApi.get(`/account/${id}/favorite/movies`, {
+  //       params: {
+  //         session_id: session_id
+  //       }
+  //     })
+  //       .then(data => {
+  //         this.props.updateMoviesFavorite(data.results)
+  //       })
+  //   }
+  // }
 
-  getWatchlist = (session_id, id) => {
-    if (session_id){
-      CallApi.get(`/account/${id}/watchlist/movies`, {
-        params: {
-          session_id: session_id
-        }
-      })
-        .then(data => {
-          this.props.updateMoviesWatchlist(data.results)
-          // this.setState({
-          //   moviesWatchlist: data.results
-          // })
-        })
-    }
-  }
+  // getWatchlist = (session_id, id) => {
+  //   if (session_id){
+  //     CallApi.get(`/account/${id}/watchlist/movies`, {
+  //       params: {
+  //         session_id: session_id
+  //       }
+  //     })
+  //       .then(data => {
+  //         this.props.updateMoviesWatchlist(data.results)
+  //       })
+  //   }
+  // }
 
   componentDidMount() {
-    const {session_id} = this.props
-
-    if (session_id) {
-      CallApi.get("/account", {
-        params: {
-          session_id
-        }
-      }).then(user => {
-          this.props.updateAuth(user, session_id)     // занесли данные о user в state
-          this.getFavorite(session_id, user.id)   // server favorite -> state
-          this.getWatchlist(session_id, user.id)  // server watchlist -> state
-        })
-    }
+    this.props.getUser(this.props.session_id)
+    // const {session_id} = this.props
+    //
+    // if (session_id) {
+    //   CallApi.get("/account", {
+    //     params: {
+    //       session_id
+    //     }
+    //   }).then(user => {
+    //       this.props.updateAuth(user, session_id)     // занесли данные о user в state
+    //       this.getFavorite(session_id, user.id)   // server favorite -> state
+    //       this.getWatchlist(session_id, user.id)  // server watchlist -> state
+    //     })
+    // }
 
 
 
@@ -171,8 +166,8 @@ class App extends React.Component {
           // updateSessionId: this.updateSessionId,
           onLogOut: onLogOut,
           toggleLoginModal: toggleLoginModal,
-          getFavorite: this.getFavorite,
-          getWatchlist: this.getWatchlist
+          getFavorite: this.props.getFavorite,
+          getWatchlist: this.props.getWatchlist
         }}>
           <div>
             <Header
@@ -211,12 +206,11 @@ const mapDispatchToProps = (dispatch) => {
       session_id
     })),
     onLogOut: () => dispatch(actionCreatorLogOut()),
-    toggleLoginModal: () => dispatch(actionCreatorShowLoginModal()),
-    updateMoviesFavorite: (moviesFavorite) => dispatch(actionCreatorMoviesFavorite({
-      moviesFavorite
-    })),
-    updateMoviesWatchlist: (moviesWatchlist) => dispatch(actionCreatorMoviesWatchlist({
-      moviesWatchlist
+    toggleLoginModal: () => dispatch(actionCreatorToggleLoginModal()),
+    getFavorite: (session_id, id) => dispatch(getFavoriteThunkCreator({session_id, id})),
+    getWatchlist: (session_id, id) => dispatch(getWatchlistThunkCreator({session_id, id})),
+    getUser: (session_id) => dispatch(getUserThunkCreator({
+      session_id
     }))
   }
 }
